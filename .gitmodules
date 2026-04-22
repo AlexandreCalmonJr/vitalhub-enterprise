@@ -1,0 +1,6 @@
+[submodule "agendafacil-api"]
+	path = agendafacil-api
+	url = https://github.com/AlexandreCalmonJr/agendafacil-api.git
+[submodule "agendafacil-front"]
+	path = agendafacil-front
+	url = https://github.com/AlexandreCalmonJr/agendafacil-front.git
