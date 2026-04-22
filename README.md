@@ -292,14 +292,20 @@ graph LR
 
 ---
 
-## 📚 Documentação Detalhada
+## 📅 Release Notes
 
-Cada módulo possui seu próprio README com informações aprofundadas:
+### **v2.0 — Enterprise Overhaul (Atual)**
+*   📦 **Arquitetura**: Migração para Monorepo com Git Submodules.
+*   🛡️ **Segurança**: Middleware RBAC avançado com 4 perfis de acesso.
+*   🧠 **Inteligência**: Motor anti-conflito de horários (Backend + Frontend).
+*   🎨 **UI/UX**: Novo Visualizador de Exames VitalPro e Sala de Atendimento Premium.
+*   📊 **Analytics**: Dashboards de receita e fluxo de pacientes com Recharts.
+*   🌗 **Theming**: Sistema de Dark Mode inteligente unificado.
 
-| Módulo | README | Conteúdo |
-|:-------|:-------|:---------|
-| 🔧 Backend | [`agendafacil-api/README.md`](agendafacil-api/README.md) | Endpoints, schema SQL, diagramas ER, regras de negócio |
-| 💊 Frontend | [`agendafacil-front/README.md`](agendafacil-front/README.md) | Componentes, rotas, design system, integração API |
+### **v1.0 — MVP Inicial**
+*   Base de agendamento funcional.
+*   Autenticação JWT básica.
+*   CRUD de pacientes e médicos.
 
 ---
 
