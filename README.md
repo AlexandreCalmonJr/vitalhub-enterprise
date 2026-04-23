@@ -6,11 +6,11 @@
   <img src="https://img.shields.io/badge/Railway-0B0D0E?style=for-the-badge&logo=railway&logoColor=white" />
 </p>
 
-<h1 align="center">🏥 Clínica Vita — VitalHub Enterprise Platform</h1>
+<h1 align="center">Clínica Vita — VitalHub Enterprise Platform</h1>
 
 <p align="center">
-  <strong>Sistema completo de gestão para clínicas médicas privadas</strong><br/>
-  Agendamento inteligente · Prontuários digitais · Controle financeiro · 4 perfis de acesso
+  <strong>Sistema de gestão abrangente para clínicas médicas</strong><br/>
+  Agendamento avançado · Prontuários eletrônicos · Controle financeiro · Gestão de acessos por perfil
 </p>
 
 <p align="center">
@@ -23,51 +23,51 @@
 
 ---
 
-## ✨ Melhorias de Arquitetura (v2.0)
+## Aprimoramentos de Arquitetura (v2.0)
 
-Nesta versão, o repositório foi elevado ao padrão **Enterprise** com as seguintes implementações:
+Nesta versão, a infraestrutura do repositório foi atualizada para o padrão **Enterprise**, com as seguintes implementações:
 
-*   **Header Minimalista**: Substituição dos badges gigantes por um design centralizado com links rápidos, focado na experiência do desenvolvedor.
-*   **Fluxograma Técnico**: Adição de diagramas **Mermaid** que detalham o funcionamento interno do sistema (RBAC, Motor Anti-Conflito e Elite PDF Generator).
-*   **Tabela de Submódulos**: Organização clara que demonstra a orquestração do monorepo sobre dois projetos independentes e desacoplados.
-*   **Licença MIT**: Inclusão oficial da licença MIT para garantir a segurança jurídica e transparência do código.
-*   **Instrução de Clone Recursivo**: Documentação do comando essencial para garantir que as dependências de submódulos sejam baixadas corretamente por novos colaboradores.
+*   **Interface Minimalista**: Implementação de um design centralizado com foco na eficiência operacional e experiência do usuário.
+*   **Documentação Técnica**: Inclusão de diagramas **Mermaid** detalhando fluxos críticos como RBAC (Controle de Acesso Baseado em Perfil) e o Motor de Disponibilidade.
+*   **Orquestração de Monorepo**: Estrutura organizada para gerenciar projetos independentes e desacoplados em um único repositório.
+*   **Licença de Uso**: Adoção da licença MIT para assegurar transparência e conformidade legal do código-fonte.
+*   **Padronização de Setup**: Documentação rigorosa de procedimentos para integração de novos colaboradores e ambientes de desenvolvimento.
 
 ---
 
-## 🎯 Visão Geral
+## Visão Geral
 
-O **VitalHub** é um ERP clínico modular, projetado para operar do balcão da recepção até o consultório do médico. A plataforma entrega fluxos dedicados para cada tipo de usuário:
+O **VitalHub** é uma solução ERP modular projetada para otimizar processos desde o atendimento na recepção até o acompanhamento clínico. A plataforma oferece fluxos de trabalho especializados para cada categoria de usuário:
 
-| Perfil | Portal | Funcionalidades Principais |
+| Perfil | Interface | Funcionalidades Principais |
 |:-------|:-------|:--------------------------|
-| 🔴 **Administrador** | Hub Operacional | Visão 360°, gestão de contas, métricas financeiras |
-| 🟠 **Recepcionista** | Hub Operacional | Agendamento por paciente, check-in, controle de pagamento |
-| 🟢 **Profissional** | Painel Médico | Fila de atendimento, prontuário SOAP, receita PDF, exames |
-| 🔵 **Paciente** | Portal do Paciente | Auto-agendamento, histórico, teleconsulta |
+| **Administrador** | Hub Operacional | Gestão estratégica, administração de contas e indicadores de desempenho. |
+| **Recepcionista** | Hub Operacional | Gerenciamento de agendas, fluxos de check-in e controle de faturamento. |
+| **Profissional** | Painel Médico | Gestão de fila de atendimento, prontuário eletrônico (SOAP) e prescrições. |
+| **Paciente** | Portal do Paciente | Autoatendimento para agendamentos, histórico clínico e telemedicina. |
 
 ---
 
-## 🚀 Stack Tecnológica
+## Estrutura Tecnológica
 
 ```mermaid
 graph TB
-    subgraph Frontend["💊 Frontend — React + Vite"]
+    subgraph Frontend["Frontend — React + Vite"]
         A[React 18] --> B[React Router 6]
         A --> C[Axios + JWT Interceptors]
         A --> D[Recharts]
         A --> E[Lucide Icons]
-        A --> F[CSS3 Puro — Glassmorphism]
+        A --> F[CSS3 - Glassmorphism]
     end
 
-    subgraph Backend["🔧 Backend — Node.js + Express"]
+    subgraph Backend["Backend — Node.js + Express"]
         G[Express 4] --> H[JWT Auth]
         G --> I[bcrypt.js]
         G --> J[mysql2]
-        G --> K[CORS + Middleware RBAC]
+        G --> K[Middleware RBAC]
     end
 
-    subgraph Database["🗄️ MySQL 8"]
+    subgraph Database["MySQL 8"]
         L[usuarios]
         M[profissionais]
         N[clientes]
@@ -82,238 +82,192 @@ graph TB
 
 ---
 
-## 📂 Estrutura do Monorepo
+## Estrutura do Repositório
 
 ```
 clinica-vita/
 │
-├── 📄 README.md                    ← Você está aqui
+├── README.md                    ← Documentação principal
 │
-├── 📦 agendafacil-api/             ← Backend (Node.js + Express)
-│   ├── server.js                   # Entry point — porta 3001
+├── agendafacil-api/             ← Backend (Node.js + Express)
+│   ├── server.js                   # Ponto de entrada
 │   ├── src/
-│   │   ├── config/database.js      # Pool MySQL com suporte multi-env
-│   │   ├── controllers/            # 5 controllers de negócio
-│   │   │   ├── auth.controller.js        # Login + registro
-│   │   │   ├── agendamentos.controller.js # CRUD + anti-conflito
-│   │   │   ├── clientes.controller.js     # CRUD + filtro por perfil
-│   │   │   ├── profissionais.controller.js # CRUD corpo clínico
-│   │   │   └── prontuarios.controller.js  # Registro clínico
-│   │   ├── routes/                 # Express Router por módulo
-│   │   └── middleware/             # JWT verify + RBAC guard
+│   │   ├── config/database.js      # Configuração de banco de dados
+│   │   ├── controllers/            # Lógica de negócio
+│   │   ├── routes/                 # Definição de rotas
+│   │   └── middleware/             # Segurança e autenticação
 │   ├── database/
-│   │   ├── schema.sql              # 6 tabelas + índices
-│   │   └── seed.sql                # Dados de teste (5 usuários)
-│   ├── .env.example
-│   └── 📄 README.md                # Docs detalhadas da API
+│   │   ├── schema.sql              # Estrutura do banco
+│   │   └── seed.sql                # Dados iniciais para teste
+│   └── README.md                # Documentação técnica da API
 │
-├── 💊 agendafacil-front/           ← Frontend (React + Vite)
+├── agendafacil-front/           ← Frontend (React + Vite)
 │   ├── src/
-│   │   ├── pages/                  # 17 telas
-│   │   ├── components/             # 8 componentes reutilizáveis
-│   │   ├── styles/                 # 25 CSS modules
-│   │   ├── contexts/               # AuthContext (JWT)
-│   │   ├── hooks/                  # useApi, useDarkMode
-│   │   ├── services/api.js         # Axios + interceptors
-│   │   ├── utils/pdfGenerator.js   # Gerador de receitas PDF
-│   │   └── App.jsx                 # Router + ProtectedRoute
-│   ├── .env.example
-│   └── 📄 README.md                # Docs detalhadas do Frontend
+│   │   ├── pages/                  # Interfaces do sistema
+│   │   ├── components/             # Componentes reutilizáveis
+│   │   ├── styles/                 # Estilização modular
+│   │   ├── contexts/               # Gerenciamento de estado global
+│   │   ├── services/api.js         # Integração com API
+│   │   └── utils/pdfGenerator.js   # Utilitário de exportação PDF
+│   └── README.md                # Documentação técnica do Frontend
 │
-└── 📖 Documentação completa nos READMEs internos
+└── Documentação detalhada disponível nos diretórios internos
 ```
 
 ---
 
-## ⚡ Setup Local (5 minutos)
+## Configuração do Ambiente Local
 
 ### Pré-requisitos
 
-| Ferramenta | Versão | Necessidade |
+| Componente | Versão | Requisito |
 |:-----------|:-------|:------------|
-| Node.js | 18+ | Obrigatório |
-| MySQL | 8+ | Obrigatório |
-| npm | 9+ | Incluído com Node |
-| Git | 2+ | Recomendado |
+| Node.js | 18 ou superior | Essencial |
+| MySQL | 8 ou superior | Essencial |
+| npm | 9 ou superior | Integrado ao Node |
+| Git | 2 ou superior | Recomendado |
 
-### 1️⃣ Banco de Dados
+### 1. Preparação do Banco de Dados
 
 ```bash
-# Criar o banco e as tabelas
+# Executar a criação da estrutura
 mysql -u root -p < agendafacil-api/database/schema.sql
 
-# Popular com dados de teste
+# Inserir dados de teste
 mysql -u root -p < agendafacil-api/database/seed.sql
 ```
 
-### 2️⃣ Backend (API)
+### 2. Configuração do Backend
 
 ```bash
 cd agendafacil-api
 npm install
 
-# Criar .env
+# Configurar variáveis de ambiente
 cp .env.example .env
-# Editar com suas credenciais MySQL
+# Configure suas credenciais no arquivo .env
 
-# Iniciar servidor → http://localhost:3001
+# Iniciar o serviço (disponível em http://localhost:3001)
 node server.js
 ```
 
-### 3️⃣ Frontend (Portal)
+### 3. Configuração do Frontend
 
 ```bash
 cd agendafacil-front
 npm install
 
-# Configurar API
+# Configurar conexão com a API
 echo "VITE_API_URL=http://localhost:3001/api" > .env
 
-# Iniciar dev server → http://localhost:5173
+# Iniciar o servidor de desenvolvimento (disponível em http://localhost:5173)
 npm run dev
 ```
 
-### ✅ Verificação
-
-Após os 3 passos, acesse `http://localhost:5173` e faça login com qualquer credencial abaixo.
-
 ---
 
-## 🧪 Credenciais de Teste
+## Credenciais para Homologação
 
-> Senha universal para todos: **`123456`**
+Senha padrão para todos os perfis: **`123456`**
 
-| Perfil | Nome | E-mail | O que vê |
+| Perfil | Identificação | E-mail de Acesso | Escopo de Visibilidade |
 |:-------|:-----|:-------|:---------|
-| 🔴 Admin | Administrador Vita | `admin@clinica.com` | Tudo — hub, contas, métricas |
-| 🟢 Médica | Dra. Ana Silva | `ana.silva@clinica.com` | Dashboard, atendimento, pacientes |
-| 🟢 Médico | Dr. Roberto Santos | `roberto.santos@clinica.com` | Dashboard, atendimento, pacientes |
-| 🔵 Paciente | Maria Santos | `maria.santos@email.com` | Consultas, agendar, profissionais |
-| 🟠 Recepção | Patrícia Staff | `recepcao@clinica.com` | Hub, agenda global, agendamento |
+| Admin | Administrador Vita | `admin@clinica.com` | Acesso integral ao sistema e indicadores. |
+| Médico | Dra. Ana Silva | `ana.silva@clinica.com` | Dashboard clínico e prontuários. |
+| Médico | Dr. Roberto Santos | `roberto.santos@clinica.com` | Dashboard clínico e prontuários. |
+| Paciente | Maria Santos | `maria.santos@email.com` | Agendamentos e histórico pessoal. |
+| Recepção | Patrícia Staff | `recepcao@clinica.com` | Agenda operacional e check-in. |
 
 ---
 
-## 🛡️ Controle de Acesso (RBAC)
+## Matriz de Controle de Acesso (RBAC)
 
-O sistema implementa **Role-Based Access Control** tanto no frontend (menus, rotas, botões) quanto no backend (middleware, queries filtradas).
+O sistema implementa segurança baseada em funções, aplicada tanto na interface quanto nas requisições ao servidor.
 
-| Funcionalidade | 🔴 Admin | 🟠 Recepção | 🟢 Médico | 🔵 Paciente |
+| Funcionalidade | Admin | Recepção | Médico | Paciente |
 |:---------------|:--------:|:-----------:|:---------:|:-----------:|
-| Hub Operacional (métricas, check-in, pagamento) | ✅ | ✅ | ❌ | ❌ |
-| Agenda Global (visão multi-médico) | ✅ | ✅ | ❌ | ❌ |
-| Agendar por paciente (seleção no wizard) | ✅ | ✅ | ❌ | ❌ |
-| Cadastrar pacientes | ✅ | ✅ | ❌ | ❌ |
-| Gerenciar contas do sistema | ✅ | ❌ | ❌ | ❌ |
-| Painel de atendimento (fila do dia) | ✅ | ❌ | ✅ | ❌ |
-| Sala de atendimento (prontuário, receita, exames) | ✅ | ❌ | ✅ | ❌ |
-| Ver seus pacientes (filtrado) | ❌ | ❌ | ✅ | ❌ |
-| Auto-agendamento (wizard 4 passos) | ❌ | ❌ | ❌ | ✅ |
-| Dashboard pessoal | ❌ | ❌ | ✅ | ✅ |
+| Hub Operacional (Métricas e Faturamento) | Permitido | Permitido | Negado | Negado |
+| Agenda Global (Multi-profissional) | Permitido | Permitido | Negado | Negado |
+| Agendamento em nome de terceiros | Permitido | Permitido | Negado | Negado |
+| Gestão de Contas de Usuário | Permitido | Negado | Negado | Negado |
+| Painel de Atendimento Clínico | Permitido | Negado | Permitido | Negado |
+| Prontuário e Prescrição Digital | Permitido | Negado | Permitido | Negado |
+| Autoagendamento | Negado | Negado | Negado | Permitido |
 
 ---
 
-## 🌍 Deploy na Nuvem (Railway)
+## Implementação em Nuvem (Railway)
 
 ### Arquitetura de Deploy
 
 ```mermaid
 graph LR
     subgraph Railway
-        DB[(MySQL Service)]
-        API[API Service<br/>Node.js]
-        WEB[Web Service<br/>React Build]
+        DB[(Serviço MySQL)]
+        API[Serviço API<br/>Node.js]
+        WEB[Serviço Web<br/>Static Build]
     end
 
     WEB -->|"VITE_API_URL"| API
-    API -->|"MYSQL_*"| DB
+    API -->|"Conexão DB"| DB
 
-    USER((Usuário)) -->|"HTTPS"| WEB
+    USER((Usuário Final)) -->|"HTTPS"| WEB
 ```
 
-### Passo a Passo
+### Procedimentos de Implantação
 
-<details>
-<summary>📦 <strong>1. MySQL Service</strong></summary>
+**1. Serviço de Banco de Dados**
+1. Instancie o serviço MySQL no Railway.
+2. Utilize as variáveis geradas automaticamente (`MYSQLHOST`, `MYSQLUSER`, etc.).
+3. Execute os scripts de estrutura e semente via CLI.
 
-1. No painel Railway, clique em **"New Service"** → **MySQL**
-2. O Railway gera automaticamente as variáveis:
-   - `MYSQLHOST`, `MYSQLUSER`, `MYSQLPASSWORD`, `MYSQLDATABASE`, `MYSQLPORT`
-3. Conecte-se via terminal e rode os scripts:
-   ```bash
-   mysql -h $MYSQLHOST -u $MYSQLUSER -p$MYSQLPASSWORD $MYSQLDATABASE < database/schema.sql
-   mysql -h $MYSQLHOST -u $MYSQLUSER -p$MYSQLPASSWORD $MYSQLDATABASE < database/seed.sql
-   ```
+**2. Serviço de API (Backend)**
+1. Vincule o repositório `agendafacil-api`.
+2. Configure as variáveis de ambiente necessárias.
+3. Comando de Build: `npm install`.
 
-</details>
-
-<details>
-<summary>🔧 <strong>2. API Service (Backend)</strong></summary>
-
-1. **New Service** → **GitHub Repo** → selecionar `agendafacil-api`
-2. Em **Variables**, adicionar:
-   - As variáveis MySQL do passo anterior
-   - `JWT_SECRET` = chave aleatória forte
-   - `PORT` = 3001 (ou deixar Railway definir)
-3. **Build Command**: `npm install`
-4. **Start Command**: `node server.js`
-
-</details>
-
-<details>
-<summary>💊 <strong>3. Web Service (Frontend)</strong></summary>
-
-1. **New Service** → **GitHub Repo** → selecionar `agendafacil-front`
-2. Em **Variables**, adicionar:
-   - `VITE_API_URL` = URL pública da API (ex: `https://sua-api.up.railway.app/api`)
-3. **Build Command**: `npm install && npm run build`
-4. **Start Command**: `npx serve dist -s`
-
-</details>
+**3. Serviço Frontend**
+1. Vincule o repositório `agendafacil-front`.
+2. Defina a variável `VITE_API_URL` apontando para a API pública.
+3. Comando de Build: `npm install && npm run build`.
 
 > [!IMPORTANT]
-> **Regra de ouro**: Nunca hardcode senhas ou URLs no código. Sempre use variáveis de ambiente. Isso permite que o mesmo código funcione em local, staging e produção sem alterações.
+> **Segurança de Dados**: Evite a persistência de credenciais ou URLs estáticas no código-fonte. Utilize estritamente variáveis de ambiente para assegurar a portabilidade do sistema.
 
 ---
 
-## 🎨 Features Visuais
+## Funcionalidades de Destaque
 
-| Feature | Descrição |
+| Recurso | Descrição Técnica |
 |:--------|:----------|
-| 🪟 **Glassmorphism** | Cards com blur e bordas translúcidas |
-| 🌗 **Dark Mode** | Toggle exclusivo do portal (não afeta site público) |
-| 🧙 **Wizard Inteligente** | Agendamento em 4 passos com adaptação por perfil |
-| 📊 **Analytics** | Gráficos Recharts de receita e fluxo de pacientes |
-| 📄 **PDF Generator** | Receituário e pedidos de exames em PDF |
-| 🚫 **Anti-conflito** | Bloqueio visual + validação server-side de horários |
-| 📹 **Teleconsulta** | Links Zoom/Meet integrados nos agendamentos |
-| 🔔 **Notificações** | Badges de lembrete enviado nos cards |
-| 📅 **Google Calendar** | Botão para exportar consulta ao Google Agenda |
-| 🩺 **Prontuário SOAP** | Editor completo com histórico do paciente |
+| **Glassmorphism Interface** | Interface moderna com efeitos de transparência e profundidade. |
+| **Dynamic Dark Mode** | Suporte a temas claro e escuro integrado ao portal. |
+| **Intelligent Wizard** | Fluxo de agendamento assistido com validação em tempo real. |
+| **Business Analytics** | Visualização de dados operacionais via Recharts. |
+| **Document Generation** | Emissão automatizada de receituários e solicitações em formato PDF. |
+| **Collision Engine** | Prevenção de conflitos de horários em nível de banco de dados e UI. |
+| **Telemedicine Integration** | Suporte a links de atendimento remoto integrados ao agendamento. |
+| **Notifications Service** | Sistema de status e alertas visuais para acompanhamento de fluxos. |
 
 ---
 
-## 📅 Release Notes
+## Histórico de Versões
 
-### **v2.0 — Enterprise Overhaul (Atual)**
-*   📦 **Arquitetura**: Migração para Monorepo com Git Submodules.
-*   🛡️ **Segurança**: Middleware RBAC avançado com 4 perfis de acesso.
-*   🧠 **Inteligência**: Motor anti-conflito de horários (Backend + Frontend).
-*   🎨 **UI/UX**: Novo Visualizador de Exames VitalPro e Sala de Atendimento Premium.
-*   📊 **Analytics**: Dashboards de receita e fluxo de pacientes com Recharts.
-*   🌗 **Theming**: Sistema de Dark Mode inteligente unificado.
+### **v2.0 — Enterprise Update (Atual)**
+*   Aprimoramento da arquitetura para Monorepo.
+*   Implementação de RBAC avançado com quatro níveis de permissão.
+*   Motor de validação de disponibilidade (Backend + Frontend).
+*   Nova interface de Atendimento Premium e Gestão de Exames.
+*   Dashboard de Analytics integrado.
 
-### **v1.0 — MVP Inicial**
-*   Base de agendamento funcional.
-*   Autenticação JWT básica.
-*   CRUD de pacientes e médicos.
+### **v1.0 — MVP**
+*   Funcionalidade base de agendamento.
+*   Autenticação via JWT.
+*   Gestão básica de usuários e profissionais.
 
 ---
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Made_with-💚_e_código-16a34a?style=for-the-badge" />
-</p>
-
-<p align="center">
-  <sub><strong>Clínica Vita</strong> — VitalHub Enterprise Platform v2.0</sub><br/>
-  <sub>Monorepo full-stack para gestão clínica de alta performance</sub>
+  <strong>Clínica Vita</strong> — VitalHub Enterprise Platform v2.0<br/>
+  Solução de alta performance para gestão clínica full-stack.
 </p>
