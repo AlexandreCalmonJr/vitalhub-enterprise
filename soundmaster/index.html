@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundMaster - Assistente Ui24R</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00ffcc">
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- ÁREA DO AGENTE (Esquerda) -->
+        <div class="agent-panel">
+            <header class="agent-header">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5v14M7 9v6M22 10v4M2 10v4"/></svg>
+                    <h1>SoundMaster</h1>
+                </div>
+                <div class="status-indicator">
+                    <span class="dot offline" id="mic-status-dot"></span>
+                    <span id="mic-status-text">Mic Offline</span>
+                </div>
+            </header>
+
+            <nav class="agent-nav">
+                <button class="nav-btn active" data-target="dashboard">Dashboard</button>
+                <button class="nav-btn" data-target="analyzer">Analisador ao Vivo</button>
+                <button class="nav-btn" data-target="eq">Guia EQ</button>
+                <button class="nav-btn" data-target="rt60">Acústica (RT60)</button>
+                <button class="nav-btn" data-target="tips">Dicas (Igreja)</button>
+                <button class="nav-btn" data-target="ai-chat" style="color: var(--accent-primary);">🤖 Assistente IA</button>
+            </nav>
+
+            <main class="agent-content">
+                <!-- MÓDULO: Dashboard -->
+                <section id="dashboard" class="module active">
+                    <h2>Bem-vindo, Técnico!</h2>
+                    <p class="subtitle">Seu assistente inteligente para a mesa Soundcraft Ui24R.</p>
+                    
+                    <div class="card alert-card">
+                        <h3>Dica do Contexto</h3>
+                        <p>Sua igreja possui muitas janelas, o que causa reverberação. Use o módulo <strong>Acústica (RT60)</strong> para ver dicas de tratamento ou ative o <strong>Analisador</strong> para evitar microfonias.</p>
+                    </div>
+
+                    <div class="card info-card" id="local-ip-card" style="display: none; background: #2b3b4c; border-color: #34ace0; margin-bottom: 20px;">
+                        <h3>📱 Controle Remoto (iPads/Celulares)</h3>
+                        <p>Para abrir este assistente em outro dispositivo na mesma rede, acesse:</p>
+                        <h2 id="server-ip-display" style="color: #34ace0; text-align: center; margin: 10px 0; font-family: monospace;">Aguardando IP...</h2>
+                    </div>
+
+                    <div class="quick-actions">
+                        <button class="action-btn primary" onclick="document.querySelector('[data-target=\'analyzer\']').click()">
+                            Iniciar Analisador
+                        </button>
+                    </div>
+                </section>
+
+                <!-- MÓDULO: Analisador -->
+                <section id="analyzer" class="module">
+                    <h2>Analisador de Áudio (FFT)</h2>
+                    <div class="analyzer-controls">
+                        <button id="btn-start-audio" class="action-btn primary">Ativar Microfone</button>
+                        <button id="btn-stop-audio" class="action-btn secondary" disabled>Parar</button>
+                    </div>
+
+                    <div class="visualizer-container">
+                        <canvas id="fft-canvas" width="400" height="200"></canvas>
+                        <div class="frequency-zones">
+                            <span>Sub</span>
+                            <span>Low</span>
+                            <span>Mid</span>
+                            <span>High-Mid</span>
+                            <span>High</span>
+                        </div>
+                    </div>
+
+                    <div class="feedback-detector">
+                        <h3>Detector de Feedback</h3>
+                        <div id="feedback-alert" class="alert safe">
+                            Sem picos perigosos.
+                        </div>
+                        <!-- Botão de Automação Nível 2 (Invisível por padrão) -->
+                        <button id="btn-auto-cut" class="action-btn primary mt-15" style="display: none; background: var(--danger); box-shadow: 0 0 15px rgba(255, 71, 87, 0.4);">
+                            🪄 Cortar Frequência na Mesa
+                        </button>
+                    </div>
+
+                    <div class="card mt-15" style="background: var(--surface-2); margin-bottom: 15px;">
+                        <h3>💾 Mapeamentos Acústicos Salvos</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px;">Salve frequências problemáticas detectadas no salão.</p>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <input type="number" id="save-hz" class="custom-input" placeholder="Ex: 2500" style="flex: 1; margin: 0;">
+                            <span style="font-size: 0.9rem;">Hz</span>
+                            <button id="btn-save-map" class="action-btn secondary" style="flex: 1;">Salvar Pico</button>
+                        </div>
+                        <ul id="db-mappings-list" style="margin-top: 15px; font-size: 0.85rem; list-style: none; padding: 0;">
+                            <!-- Mapeamentos carregados via DB aqui -->
+                        </ul>
+                    </div>
+                    
+                    <div class="rms-meter">
+                        <div class="rms-bar-bg">
+                            <div id="rms-bar" class="rms-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Módulo de Geração de Sinais para Alinhamento -->
+                    <div class="card" style="margin-top: 20px;">
+                        <h3>Gerador de Sinais (Alinhamento)</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px;">Use a saída de fone ligada à mesa para jogar o som no PA.</p>
+                        
+                        <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                            <button id="btn-pink-noise" class="action-btn secondary" style="flex: 1; border-color: #ff6b81;">
+                                🔊 Ruído Rosa (Pink)
+                            </button>
+                        </div>
+                        
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <button id="btn-sine-wave" class="action-btn secondary" style="flex: 1; border-color: #34ace0;">
+                                🎵 Tom Senoidal
+                            </button>
+                            <input type="number" id="sine-freq" value="60" class="custom-input" style="width: 80px; margin-top: 0; padding: 12px 5px; text-align: center;" placeholder="Hz">
+                            <span style="font-size: 0.9rem;">Hz</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO: Guia EQ -->
+                <section id="eq" class="module">
+                    <h2>Guia de Equalização</h2>
+                    <select id="eq-instrument-select" class="custom-select">
+                        <option value="voz">Voz / Pregação</option>
+                        <option value="violao">Violão Acústico</option>
+                        <option value="baixo">Baixo</option>
+                        <option value="bumbo">Bateria (Bumbo)</option>
+                        <option value="teclado">Teclado</option>
+                    </select>
+
+                    <div id="eq-data-display" class="card info-card">
+                        <!-- Preenchido via JS -->
+                    </div>
+                </section>
+
+                <!-- MÓDULO: RT60 & Acústica -->
+                <section id="rt60" class="module">
+                    <h2>Calculadora Acústica</h2>
+                    <p class="subtitle">Insira as dimensões do salão para calcular a reverberação e o Delay das caixas auxiliares.</p>
+                    
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <div style="flex: 1;">
+                            <label>Comprimento (m):</label>
+                            <input type="number" id="rt-length" value="20" class="custom-input">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Largura (m):</label>
+                            <input type="number" id="rt-width" value="10" class="custom-input">
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Altura (m):</label>
+                            <input type="number" id="rt-height" value="5" class="custom-input">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Distância: PA até Caixas Auxiliares (metros):</label>
+                        <input type="number" id="rt-delay-dist" value="10" class="custom-input" placeholder="Ex: 10">
+                        <small style="color: var(--text-muted); font-size: 0.75rem;">Deixe em 0 se não tiver caixas de reforço.</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nível de Absorção (Estimado):</label>
+                        <select id="rt-absorption" class="custom-select">
+                            <option value="0.05">Baixa (Piso liso, muito vidro, paredes nuas)</option>
+                            <option value="0.15">Média (Cadeiras estofadas, pessoas, algumas cortinas)</option>
+                            <option value="0.30">Alta (Carpete, forro acústico, cortinas grossas)</option>
+                        </select>
+                    </div>
+                    <button id="btn-calc-rt60" class="action-btn primary">Calcular Acústica</button>
+                    
+                    <div id="rt60-result" class="card mt-15" style="display:none;"></div>
+                </section>
+
+                <!-- MÓDULO: Dicas -->
+                <section id="tips" class="module">
+                    <h2>Soluções para Igreja</h2>
+                    <div class="accordion">
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">Reverberação em Vidros (Seu Maior Problema)</h3>
+                            <div class="accordion-content">
+                                <ul>
+                                    <li><strong>O Problema:</strong> Vidros refletem frequências médias-agudas (2kHz a 8kHz) quase perfeitamente, criando ecos rápidos ("slapback") que destroem a clareza da voz.</li>
+                                    <li><strong>Tratamento Físico:</strong> Cortinas acústicas espessas são a melhor solução custo-benefício. Feche-as durante os cultos.</li>
+                                    <li><strong>Na Ui24R (EQ do PA):</strong> Vá no Master EQ e dê uma leve atenuada ("corte") na região de 2kHz a 4kHz. Isso tira a "energia" que bate no vidro, compensando o ambiente.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">Alinhamento das 12 Caixas (Salão + Auxiliares + Retorno)</h3>
+                            <div class="accordion-content">
+                                <ul>
+                                    <li><strong>Volume Setorizado:</strong> Não force o som das caixas da frente (PA principal) para chegar ao fundo. Use as 4 caixas auxiliares em volumes mais baixos. Isso reduz a energia que bate nas janelas.</li>
+                                    <li><strong>Delay nas Caixas Auxiliares:</strong> Na Ui24R, você precisa aplicar *Delay* nas saídas das caixas auxiliares do meio/fundo do salão. Se não atrasar o som delas para casar com o som que vem das caixas da frente, o som embola (efeito comb filter). Meça a distância física e aplique o delay na saída (aprox. 3 milissegundos por metro).</li>
+                                    <li><strong>Retornos (Palco):</strong> Use o EQ Gráfico das saídas Aux (onde estão ligados os 2 retornos) para "ring out". Corte as frequências que apitam antes do culto, garantindo que o retorno não vaze para o salão e gere mais confusão no vidro.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h3 class="accordion-header">Transmissão (Live) vs. Salão</h3>
+                            <div class="accordion-content">
+                                <ul>
+                                    <li><strong>Mixagem Separada:</strong> Nunca mande o L/R do salão direto para a Live. A igreja já tem muito eco do vidro, mas a internet não ouve isso. Se você equalizar o som para o salão, a live ficará ruim.</li>
+                                    <li><strong>Solução na Ui24R:</strong> Crie um "Submix" estéreo usando duas saídas Auxiliares vazias e mande esse sinal para o OBS/Live.</li>
+                                    <li><strong>Microfones de Ambiente:</strong> Para quem assiste em casa se sentir no culto, coloque dois microfones condensadores apontados para a igreja e mande *APENAS* para a via da Live. NUNCA mande esses microfones para o PA.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MÓDULO: Assistente IA -->
+                <section id="ai-chat" class="module">
+                    <h2>Assistente IA Local</h2>
+                    <p class="subtitle">Relate um problema para que a IA analise e sugira comandos na mesa (Human-in-the-loop).</p>
+                    
+                    <div class="card" style="height: 400px; display: flex; flex-direction: column; background: var(--bg-dark); border-color: var(--accent-primary);">
+                        <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 10px; display: flex; flex-direction: column; gap: 10px;">
+                            <div style="align-self: flex-start; background: var(--surface-2); padding: 10px; border-radius: 8px; max-width: 80%; border-left: 3px solid var(--accent-primary);">
+                                Olá! Sou o SoundMaster AI (Python). Como posso ajudar no som hoje?
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="text" id="chat-input" class="custom-input" placeholder="Ex: O violão do Marcos está baixo" style="flex: 1; margin: 0;">
+                            <button id="btn-chat-send" class="action-btn primary">Enviar</button>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- ÁREA DA MESA (Direita - Ui24R) -->
+        <div class="mixer-panel">
+            <div class="mixer-header">
+                <span>Soundcraft Ui24R</span>
+                <input type="text" id="mixer-ip" value="10.10.1.1" placeholder="IP da mesa (ex: 10.10.1.1)">
+                <button id="btn-connect-mixer" class="action-btn small">Conectar</button>
+            </div>
+            <div class="mixer-frame-container">
+                <div id="mixer-placeholder" class="mixer-placeholder">
+                    <p>Insira o IP da sua Soundcraft Ui24R acima para carregar a interface aqui.</p>
+                    <p><small>(Normalmente 10.10.1.1 ou 10.10.2.1 no Wi-Fi interno)</small></p>
+                </div>
+                <iframe id="mixer-iframe" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/analyzer.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
